@@ -1,5 +1,9 @@
 export function project(name) {
-  return {name};
+  const todoList = [];
+
+  const addTodo = (todo) => todoList.push(todo);
+
+  return {name, todoList};
 }
 
 export function todo(title, description="", dueDate, priority) {
