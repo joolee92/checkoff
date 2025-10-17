@@ -12,13 +12,6 @@ function clearDialog(...inputs) {
   }
 }
 
-function createTodo(todo, projectDiv, project) {
-  const todosDiv = document.createElement("div");
-  projectDiv.appendChild(todosDiv);
-  project.addTodo(todo);
-  updateTodos(project, todosDiv);
-}
-
 function addProject(name) {
   const newProject = project(name);
   projectManager.addProject(newProject);
@@ -29,6 +22,7 @@ function updateProjects() {
   projectDiv.innerHTML = "";
   projectDiv.appendChild(addProjectBtn);
   for (const project of projectManager.projects) {
+    const todosDiv = document.createElement("div");
     const newProjectDiv = document.createElement("div");
     const h2 = document.createElement("h2");
     h2.textContent = project.getName();
@@ -67,20 +61,6 @@ function updateProjects() {
 
     const confirmBtn = document.createElement("button");
     confirmBtn.textContent = "Confirm";
-    confirmBtn.addEventListener("click", () => {
-      const newTodo = todo(
-        titleInput.value,
-        descriptionInput.value,
-        dateInput.value,
-        priorityInput.value
-      );
-
-      createTodo(newTodo, newProjectDiv, project);
-
-      dialog.close();
-
-      clearDialog(titleInput, descriptionInput, dateInput, priorityInput);
-    });
 
     dialog.appendChild(confirmBtn);
 
@@ -110,12 +90,32 @@ function updateProjects() {
       updateProjects();
     });
     newProjectDiv.appendChild(deleteBtn);
+
+    newProjectDiv.appendChild(todosDiv);
+
+    updateTodos(project, todosDiv);
+
+    confirmBtn.addEventListener("click", () => {
+      const newTodo = todo(
+        titleInput.value,
+        descriptionInput.value,
+        dateInput.value,
+        priorityInput.value
+      );
+
+      project.addTodo(newTodo);
+      todosDiv.innerHTML = "";
+      updateTodos(project, todosDiv);
+
+      dialog.close();
+
+      clearDialog(titleInput, descriptionInput, dateInput, priorityInput);
+    });
   }
 }
 
 function updateTodos(project, todosDiv) {
   for (const todo of project.todoList) {
-    todosDiv.innerHTML = "";
     const todoDiv = document.createElement("div");
     const title = document.createElement("h4");
     title.textContent = todo.getTitle();
@@ -130,6 +130,19 @@ function updateTodos(project, todosDiv) {
     todoDiv.appendChild(description);
     todoDiv.appendChild(dueDate);
     todoDiv.appendChild(priority);
+
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    todoDiv.appendChild(editBtn);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    todoDiv.appendChild(deleteBtn);
+
+    deleteBtn.addEventListener("click", () => {
+      project.deleteTodo(todo);
+      todosDiv.removeChild(todoDiv);
+    });
 
     todosDiv.appendChild(todoDiv);
   }
