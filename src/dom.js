@@ -6,11 +6,87 @@ const projectDiv = document.createElement("div");
 
 const projectManager = ProjectManager();
 
-function clearDialog(...inputs) {
-  for (const input of inputs) {
-    input.value = "";
-  }
-}
+const todoDialog = () => {
+  const dialog = document.createElement("dialog");
+
+  const titleLabel = document.createElement("label");
+  titleLabel.textContent = "Name";
+  const titleInput = document.createElement("input");
+  titleLabel.appendChild(titleInput);
+
+  dialog.appendChild(titleLabel);
+
+  const descriptionLabel = document.createElement("label");
+  descriptionLabel.textContent = "Description";
+  const descriptionInput = document.createElement("input");
+  descriptionLabel.appendChild(descriptionInput);
+
+  dialog.appendChild(descriptionLabel);
+
+  const dateLabel = document.createElement("label");
+  dateLabel.textContent = "Date";
+  const dateInput = document.createElement("input");
+  dateLabel.appendChild(dateInput);
+
+  dialog.appendChild(dateLabel);
+
+  const priorityLabel = document.createElement("label");
+  priorityLabel.textContent = "Priority";
+  const priorityInput = document.createElement("input");
+  priorityLabel.appendChild(priorityInput);
+
+  dialog.appendChild(priorityLabel);
+
+  const confirmBtn = document.createElement("button");
+  confirmBtn.textContent = "Confirm";
+
+  dialog.appendChild(confirmBtn);
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.addEventListener("click", () => {
+    dialog.close();
+    titleInput.value = "";
+    descriptionInput.value = "";
+    dateInput.value = "";
+    priorityInput.value = "";
+  });
+
+  dialog.appendChild(cancelBtn);
+
+  const div = () => dialog;
+  const getTitle = () => titleInput.value;
+  const getDescription = () => descriptionInput.value;
+  const getDate = () => dateInput.value;
+  const getPriority = () => priorityInput.value;
+
+  const setTitle = (newTitle) => (titleInput.value = newTitle);
+  const setDescription = (newDescription) =>
+    (descriptionInput.value = newDescription);
+  const setDate = (newDate) => (dateInput.value = newDate);
+  const setPriority = (newPriority) => (priorityInput.value = newPriority);
+
+  const clear = () => {
+    titleInput.value = "";
+    descriptionInput.value = "";
+    dateInput.value = "";
+    priorityInput.value = "";
+  };
+
+  return {
+    div,
+    getTitle,
+    getDescription,
+    getDate,
+    getPriority,
+    clear,
+    confirmBtn,
+    setTitle,
+    setDescription,
+    setDate,
+    setPriority,
+  };
+};
 
 function addProject(name) {
   const newProject = project(name);
@@ -29,49 +105,9 @@ function updateProjects() {
     newProjectDiv.appendChild(h2);
     projectDiv.appendChild(newProjectDiv);
 
-    const dialog = document.createElement("dialog");
-
-    const titleLabel = document.createElement("label");
-    titleLabel.textContent = "Name";
-    const titleInput = document.createElement("input");
-    titleLabel.appendChild(titleInput);
-
-    dialog.appendChild(titleLabel);
-
-    const descriptionLabel = document.createElement("label");
-    descriptionLabel.textContent = "Description";
-    const descriptionInput = document.createElement("input");
-    descriptionLabel.appendChild(descriptionInput);
-
-    dialog.appendChild(descriptionLabel);
-
-    const dateLabel = document.createElement("label");
-    dateLabel.textContent = "Date";
-    const dateInput = document.createElement("input");
-    dateLabel.appendChild(dateInput);
-
-    dialog.appendChild(dateLabel);
-
-    const priorityLabel = document.createElement("label");
-    priorityLabel.textContent = "Priority";
-    const priorityInput = document.createElement("input");
-    priorityLabel.appendChild(priorityInput);
-
-    dialog.appendChild(priorityLabel);
-
-    const confirmBtn = document.createElement("button");
-    confirmBtn.textContent = "Confirm";
-
-    dialog.appendChild(confirmBtn);
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.textContent = "Cancel";
-    cancelBtn.addEventListener("click", () => {
-      dialog.close();
-      clearDialog(titleInput, descriptionInput, dateInput, priorityInput);
-    });
-
-    dialog.appendChild(cancelBtn);
+    const todoMenu = todoDialog();
+    const dialog = todoMenu.div();
+    projectDiv.appendChild(dialog);
 
     const addTodoBtn = document.createElement("button");
     addTodoBtn.textContent = "Add Todo";
@@ -95,12 +131,12 @@ function updateProjects() {
 
     updateTodos(project, todosDiv);
 
-    confirmBtn.addEventListener("click", () => {
+    todoMenu.confirmBtn.addEventListener("click", () => {
       const newTodo = todo(
-        titleInput.value,
-        descriptionInput.value,
-        dateInput.value,
-        priorityInput.value
+        todoMenu.getTitle(),
+        todoMenu.getDescription(),
+        todoMenu.getDate(),
+        todoMenu.getPriority()
       );
 
       project.addTodo(newTodo);
@@ -109,13 +145,18 @@ function updateProjects() {
 
       dialog.close();
 
-      clearDialog(titleInput, descriptionInput, dateInput, priorityInput);
+      todoMenu.clear();
     });
   }
 }
 
 function updateTodos(project, todosDiv) {
   for (const todo of project.todoList) {
+    const todoMenu = todoDialog();
+    const dialog = todoMenu.div();
+
+    todosDiv.appendChild(dialog);
+
     const todoDiv = document.createElement("div");
     const title = document.createElement("h4");
     title.textContent = todo.getTitle();
@@ -131,20 +172,41 @@ function updateTodos(project, todosDiv) {
     todoDiv.appendChild(dueDate);
     todoDiv.appendChild(priority);
 
+    const btnDiv = document.createElement("div");
+
     const editBtn = document.createElement("button");
     editBtn.textContent = "Edit";
-    todoDiv.appendChild(editBtn);
+    btnDiv.appendChild(editBtn);
+
+    editBtn.addEventListener("click", () => {
+      todoMenu.setTitle(todo.getTitle());
+      todoMenu.setDescription(todo.getDescription());
+      todoMenu.setDate(todo.getDate());
+      todoMenu.setPriority(todo.getPriority());
+      dialog.showModal();
+    });
+
+    todoMenu.confirmBtn.addEventListener("click", () => {
+        todosDiv.innerHTML = "";
+        todo.setTitle(todoMenu.getTitle());
+        todo.setDescription(todoMenu.getDescription());
+        todo.setDate(todoMenu.getDate());
+        todo.setPriority(todoMenu.getPriority());
+        updateTodos(project, todosDiv);
+    });
 
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
-    todoDiv.appendChild(deleteBtn);
+    btnDiv.appendChild(deleteBtn);
 
     deleteBtn.addEventListener("click", () => {
       project.deleteTodo(todo);
       todosDiv.removeChild(todoDiv);
+      todosDiv.removeChild(btnDiv);
     });
 
     todosDiv.appendChild(todoDiv);
+    todosDiv.appendChild(btnDiv);
   }
 }
 
