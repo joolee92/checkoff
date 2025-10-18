@@ -184,9 +184,22 @@ function updateTodos(project, todosDiv) {
 
     todoDiv.appendChild(title);
     todoDiv.appendChild(dueDate);
-    todoDiv.appendChild(description);
 
     const btnDiv = document.createElement("div");
+
+    const detailsBtn = document.createElement("button");
+    detailsBtn.textContent = "Expand";
+    btnDiv.appendChild(detailsBtn);
+
+    detailsBtn.addEventListener("click", () => {
+      if (detailsBtn.textContent === "Expand") {
+        detailsBtn.textContent = "Hide";
+        todoDiv.appendChild(description);
+      } else {
+        detailsBtn.textContent = "Expand";
+        todoDiv.removeChild(description);
+      }
+    });
 
     const editBtn = document.createElement("button");
     editBtn.textContent = "Edit";

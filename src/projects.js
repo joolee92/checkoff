@@ -57,10 +57,6 @@ export const project = (name) => {
     }
   };
 
-  const sortTodos = () => {
-    todoList.sort((a, b) => a.getPriority() - b.getPriority());
-  };
-
   const todos = () => todoList;
   const todoCount = () => todoList.length;
 
@@ -70,7 +66,6 @@ export const project = (name) => {
     deleteTodo,
     getName,
     todos,
-    sortTodos,
     todoCount,
     checkPriority,
     updatePriorities,
