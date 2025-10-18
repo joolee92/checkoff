@@ -6,7 +6,7 @@ const projectDiv = document.createElement("div");
 
 const projectManager = ProjectManager();
 
-const todoDialog = () => {
+const todoDialog = (type, project) => {
   const dialog = document.createElement("dialog");
 
   const titleLabel = document.createElement("label");
@@ -32,8 +32,26 @@ const todoDialog = () => {
 
   const priorityLabel = document.createElement("label");
   priorityLabel.textContent = "Priority";
-  const priorityInput = document.createElement("input");
+  const priorityInput = document.createElement("select");
   priorityLabel.appendChild(priorityInput);
+
+  if (type === "add") {
+    for (let i = 0; i < project.todoCount() + 1; i++) {
+      const option = document.createElement("option");
+      option.textContent = `${i + 1}`;
+      option.value = i;
+      option.selected = i;
+      priorityInput.appendChild(option);
+    }
+  }
+  if (type === "edit") {
+    for (let i = 0; i < project.todoCount(); i++) {
+      const option = document.createElement("option");
+      option.textContent = `${i + 1}`;
+      option.value = i;
+      priorityInput.appendChild(option);
+    }
+  }
 
   dialog.appendChild(priorityLabel);
 
@@ -44,13 +62,6 @@ const todoDialog = () => {
 
   const cancelBtn = document.createElement("button");
   cancelBtn.textContent = "Cancel";
-  cancelBtn.addEventListener("click", () => {
-    dialog.close();
-    titleInput.value = "";
-    descriptionInput.value = "";
-    dateInput.value = "";
-    priorityInput.value = "";
-  });
 
   dialog.appendChild(cancelBtn);
 
@@ -70,7 +81,6 @@ const todoDialog = () => {
     titleInput.value = "";
     descriptionInput.value = "";
     dateInput.value = "";
-    priorityInput.value = "";
   };
 
   return {
@@ -81,6 +91,7 @@ const todoDialog = () => {
     getPriority,
     clear,
     confirmBtn,
+    cancelBtn,
     setTitle,
     setDescription,
     setDate,
@@ -105,7 +116,7 @@ function updateProjects() {
     newProjectDiv.appendChild(h2);
     projectDiv.appendChild(newProjectDiv);
 
-    const todoMenu = todoDialog();
+    const todoMenu = todoDialog("add", project);
     const dialog = todoMenu.div();
     projectDiv.appendChild(dialog);
 
@@ -141,18 +152,24 @@ function updateProjects() {
 
       project.addTodo(newTodo);
       todosDiv.innerHTML = "";
-      updateTodos(project, todosDiv);
+      updateProjects();
 
       dialog.close();
 
+      todoMenu.clear();
+    });
+
+    todoMenu.cancelBtn.addEventListener("click", () => {
+      dialog.close();
       todoMenu.clear();
     });
   }
 }
 
 function updateTodos(project, todosDiv) {
-  for (const todo of project.todoList) {
-    const todoMenu = todoDialog();
+  project.sortTodos();
+  for (const todo of project.todos()) {
+    const todoMenu = todoDialog("edit", project);
     const dialog = todoMenu.div();
 
     todosDiv.appendChild(dialog);
@@ -164,13 +181,10 @@ function updateTodos(project, todosDiv) {
     description.textContent = todo.getDescription();
     const dueDate = document.createElement("p");
     dueDate.textContent = todo.getDate();
-    const priority = document.createElement("p");
-    priority.textContent = todo.getPriority();
 
     todoDiv.appendChild(title);
-    todoDiv.appendChild(description);
     todoDiv.appendChild(dueDate);
-    todoDiv.appendChild(priority);
+    todoDiv.appendChild(description);
 
     const btnDiv = document.createElement("div");
 
@@ -187,12 +201,17 @@ function updateTodos(project, todosDiv) {
     });
 
     todoMenu.confirmBtn.addEventListener("click", () => {
-        todosDiv.innerHTML = "";
-        todo.setTitle(todoMenu.getTitle());
-        todo.setDescription(todoMenu.getDescription());
-        todo.setDate(todoMenu.getDate());
-        todo.setPriority(todoMenu.getPriority());
-        updateTodos(project, todosDiv);
+      todosDiv.innerHTML = "";
+      todo.setTitle(todoMenu.getTitle());
+      todo.setDescription(todoMenu.getDescription());
+      todo.setDate(todoMenu.getDate());
+      todo.setPriority(todoMenu.getPriority());
+      updateTodos(project, todosDiv);
+    });
+
+    todoMenu.cancelBtn.addEventListener("click", () => {
+      dialog.close();
+      todoMenu.clear();
     });
 
     const deleteBtn = document.createElement("button");

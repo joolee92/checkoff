@@ -34,7 +34,23 @@ export const project = (name) => {
     }
   };
 
-  return { setName, addTodo, deleteTodo, getName, todoList, id };
+  const changePriority = (todo) => {
+    for (let i = 0; i < todo.getPriority(); i++) {
+      if (todoList[i].getPriority() === todo.getPriority()) {
+        todoList.pop();
+        todoList.splice(i-1,0,todo);
+      }
+    }
+  };
+
+  const sortTodos = () => {
+    todoList.sort((a,b) => a.getPriority() - b.getPriority());
+  };
+
+  const todos = () => todoList;
+  const todoCount = () => todoList.length;
+
+  return { setName, addTodo, deleteTodo, getName, todos, id, sortTodos, todoCount };
 };
 
 export const todo = (title, description = "", dueDate, priority) => {
