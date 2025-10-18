@@ -34,23 +34,43 @@ export const project = (name) => {
     }
   };
 
-  const changePriority = (todo) => {
-    for (let i = 0; i < todo.getPriority(); i++) {
-      if (todoList[i].getPriority() === todo.getPriority()) {
-        todoList.pop();
-        todoList.splice(i-1,0,todo);
+  const checkPriority = (todo) => {
+    for (let i = 0; i < todoList.length; i++) {
+      if (todoList[i].getPriority() == todo.getPriority()) {
+        const todoIndex = todoList.indexOf(todo);
+
+        const tmp = todoList[i];
+        todoList[i] = todo;
+
+        todoList.splice(todoIndex, 1);
+        todoList.splice(i + 1, 0, tmp);
+
+        for (let i = 0; i < todoList.length; i++) {
+          todoList[i].setPriority(i.toString());
+        }
+        break;
       }
     }
   };
 
   const sortTodos = () => {
-    todoList.sort((a,b) => a.getPriority() - b.getPriority());
+    todoList.sort((a, b) => a.getPriority() - b.getPriority());
   };
 
   const todos = () => todoList;
   const todoCount = () => todoList.length;
 
-  return { setName, addTodo, deleteTodo, getName, todos, id, sortTodos, todoCount };
+  return {
+    setName,
+    addTodo,
+    deleteTodo,
+    getName,
+    todos,
+    id,
+    sortTodos,
+    todoCount,
+    checkPriority,
+  };
 };
 
 export const todo = (title, description = "", dueDate, priority) => {
@@ -65,5 +85,15 @@ export const todo = (title, description = "", dueDate, priority) => {
   const getDate = () => dueDate;
   const getPriority = () => priority;
 
-  return { setTitle, setDescription, setDate, setPriority, getTitle, getDescription, getDate, getPriority, id };
+  return {
+    setTitle,
+    setDescription,
+    setDate,
+    setPriority,
+    getTitle,
+    getDescription,
+    getDate,
+    getPriority,
+    id,
+  };
 };

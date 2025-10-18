@@ -151,6 +151,7 @@ function updateProjects() {
       );
 
       project.addTodo(newTodo);
+      project.checkPriority(newTodo);
       todosDiv.innerHTML = "";
       updateProjects();
 
@@ -167,7 +168,6 @@ function updateProjects() {
 }
 
 function updateTodos(project, todosDiv) {
-  project.sortTodos();
   for (const todo of project.todos()) {
     const todoMenu = todoDialog("edit", project);
     const dialog = todoMenu.div();
@@ -205,7 +205,8 @@ function updateTodos(project, todosDiv) {
       todo.setTitle(todoMenu.getTitle());
       todo.setDescription(todoMenu.getDescription());
       todo.setDate(todoMenu.getDate());
-      todo.setPriority(todoMenu.getPriority());
+      todo.setPriority(todoMenu.getPriority().toString());
+      project.checkPriority(todo);
       updateTodos(project, todosDiv);
     });
 
