@@ -221,8 +221,8 @@ function updateTodos(project, todosDiv) {
 
     deleteBtn.addEventListener("click", () => {
       project.deleteTodo(todo);
-      todosDiv.removeChild(todoDiv);
-      todosDiv.removeChild(btnDiv);
+      project.updatePriorities();
+      updateProjects();
     });
 
     todosDiv.appendChild(todoDiv);

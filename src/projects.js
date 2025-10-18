@@ -45,11 +45,15 @@ export const project = (name) => {
         todoList.splice(todoIndex, 1);
         todoList.splice(i + 1, 0, tmp);
 
-        for (let i = 0; i < todoList.length; i++) {
-          todoList[i].setPriority(i.toString());
-        }
+        updatePriorities();
         break;
       }
+    }
+  };
+
+  const updatePriorities = () => {
+    for (let i = 0; i < todoList.length; i++) {
+      todoList[i].setPriority(i.toString());
     }
   };
 
@@ -66,10 +70,10 @@ export const project = (name) => {
     deleteTodo,
     getName,
     todos,
-    id,
     sortTodos,
     todoCount,
     checkPriority,
+    updatePriorities,
   };
 };
 
