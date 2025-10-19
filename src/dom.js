@@ -1,3 +1,4 @@
+import { getDate } from "date-fns";
 import { ProjectManager, project, todo } from "./projects.js";
 
 export const dom = document.createElement("div");
@@ -160,7 +161,7 @@ function updateProjects() {
             project.setName(nameInput.value);
             h2.textContent = project.getName();
             projectDialog.close();
-          } else alert(`${nameInput.value} already exists!`);
+          } else alert(`Invalid name`);
         }
       });
 
@@ -209,6 +210,7 @@ function updateProjects() {
 }
 
 function updateTodos(project, todosDiv) {
+  //projectManager.updateStorage();
   for (const todo of project.todos()) {
     const todoMenu = todoDialog("edit", project);
     const dialog = todoMenu.div();
@@ -229,11 +231,13 @@ function updateTodos(project, todosDiv) {
     const btnDiv = document.createElement("div");
 
     const completeBtn = document.createElement("button");
-    completeBtn.textContent = "Incomplete";
+    todo.isComplete() ? completeBtn.textContent = "Complete" : completeBtn.textContent = "Incomplete";
     completeBtn.addEventListener("click", () => {
       if (completeBtn.textContent === "Incomplete") {
+        todo.toggleComplete();
         completeBtn.textContent = "Complete";
       } else {
+        todo.toggleComplete();
         completeBtn.textContent = "Incomplete";
       }
     });
@@ -320,7 +324,7 @@ addProjectBtn.addEventListener("click", () => {
     if (projectManager.isValidName(nameInput.value)) {
       addProject(nameInput.value);
       projectDialog.close();
-    } else alert(`${nameInput.value} already exists!`);
+    } else alert(`Invalid name`);
   });
 
   projectDialog.appendChild(confirmBtn);
@@ -338,4 +342,32 @@ addProjectBtn.addEventListener("click", () => {
 
 projectDiv.appendChild(addProjectBtn);
 
+//projectManager.retrieveStorage();
+updateProjects();
+
 dom.appendChild(projectDiv);
+
+const saveBtn = document.createElement("button");
+saveBtn.textContent = "Save";
+dom.appendChild(saveBtn);
+
+saveBtn.addEventListener("click", () => {
+  const projectStorage = [];
+  for (let i = 0; i < projectManager.projectCount(); i++) {
+    if (projectManager.getProjects()[i].todoCount() === 0) {
+        projectStorage.push([projectManager.getProjects()[i].getName()]);
+    }
+    for (const todo of projectManager.getProjects()[i].todos()) {
+      projectStorage.push([
+        projectManager.getProjects()[i].getName(),
+        todo.getTitle(),
+        todo.getDescription(),
+        todo.getDate(),
+        todo.getPriority(),
+        todo.isComplete(),
+      ]);
+    }
+  }
+
+  console.log(projectStorage);
+});

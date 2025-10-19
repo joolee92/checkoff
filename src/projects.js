@@ -1,5 +1,5 @@
 export const ProjectManager = () => {
-  const projects = [];
+  let projects = [project("Project 1")];
 
   const addProject = (project) => {
     projects.push(project);
@@ -7,10 +7,11 @@ export const ProjectManager = () => {
 
   const deleteProject = (project) => {
     for (let i = 0; i < projects.length; i++) {
-      if (projects[i].id === project.id) {
+      if (projects[i] === project) {
         projects.splice(i, 1);
       }
     }
+    updateStorage();
   };
 
   const getProjects = () => projects;
@@ -18,15 +19,26 @@ export const ProjectManager = () => {
   const projectCount = () => projects.length;
 
   const isValidName = (projectName) => {
+    if (projectName === "") return false;
     for (const project of projects) {
       if (projectName === project.getName()) {
         return false;
       }
     }
+    updateStorage();
     return true;
   };
 
-  return { addProject, deleteProject, projectCount, getProjects, isValidName };
+  const updateStorage = () => {
+    localStorage.setItem("projectStorage", JSON.stringify(projects));
+  };
+
+  const retrieveStorage = () => {
+    console.log(JSON.parse(localStorage.getItem("projectStorage"))[0]);
+    console.log(projects[0]);
+  };
+
+  return { addProject, deleteProject, projectCount, getProjects, isValidName, updateStorage, retrieveStorage };
 };
 
 export const project = (name) => {
@@ -84,17 +96,19 @@ export const project = (name) => {
   };
 };
 
-export const todo = (title, description = "", dueDate, priority) => {
+export const todo = (title, description = "", dueDate, priority, completed=false) => {
   const id = crypto.randomUUID();
   const setTitle = (newTitle) => (title = newTitle);
   const setDescription = (newDescription) => (description = newDescription);
   const setDate = (newDate) => (dueDate = newDate);
   const setPriority = (newPriority) => (priority = newPriority);
+  const toggleComplete = () => completed = !completed;
 
   const getTitle = () => title;
   const getDescription = () => description;
   const getDate = () => dueDate;
   const getPriority = () => priority;
+  const isComplete = () => completed;
 
   return {
     setTitle,
@@ -106,5 +120,7 @@ export const todo = (title, description = "", dueDate, priority) => {
     getDate,
     getPriority,
     id,
+    toggleComplete,
+    isComplete,
   };
 };
