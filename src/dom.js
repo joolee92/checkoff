@@ -1,4 +1,3 @@
-import { getDate } from "date-fns";
 import { ProjectManager, project, todo } from "./projects.js";
 
 export const dom = document.createElement("div");
@@ -341,7 +340,6 @@ addProjectBtn.addEventListener("click", () => {
   projectDialog.showModal();
 });
 
-//projectDiv.appendChild(addProjectBtn);
 
 projectManager.retrieveStorage();
 updateProjects();
