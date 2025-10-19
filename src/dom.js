@@ -24,8 +24,9 @@ const todoDialog = (type, project) => {
   dialog.appendChild(descriptionLabel);
 
   const dateLabel = document.createElement("label");
-  dateLabel.textContent = "Date";
+  dateLabel.textContent = "Due";
   const dateInput = document.createElement("input");
+  dateInput.type = "date";
   dateLabel.appendChild(dateInput);
 
   dialog.appendChild(dateLabel);
@@ -180,12 +181,22 @@ function updateTodos(project, todosDiv) {
     const description = document.createElement("p");
     description.textContent = todo.getDescription();
     const dueDate = document.createElement("p");
-    dueDate.textContent = todo.getDate();
+    dueDate.textContent = `Due: ${todo.getDate()}`;
 
     todoDiv.appendChild(title);
     todoDiv.appendChild(dueDate);
 
     const btnDiv = document.createElement("div");
+
+    const completeBtn = document.createElement("button");
+    completeBtn.textContent = "Complete";
+    completeBtn.addEventListener("click", () => {
+        if (completeBtn.textContent === "Complete") {
+            completeBtn.textContent = "Completed";
+        } else {
+            completeBtn.textContent = "Complete";
+        }
+    });
 
     const detailsBtn = document.createElement("button");
     detailsBtn.textContent = "Expand";
@@ -231,6 +242,7 @@ function updateTodos(project, todosDiv) {
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
     btnDiv.appendChild(deleteBtn);
+    btnDiv.appendChild(completeBtn);
 
     deleteBtn.addEventListener("click", () => {
       project.deleteTodo(todo);
