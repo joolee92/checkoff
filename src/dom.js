@@ -229,12 +229,12 @@ function updateTodos(project, todosDiv) {
     const btnDiv = document.createElement("div");
 
     const completeBtn = document.createElement("button");
-    completeBtn.textContent = "Complete";
+    completeBtn.textContent = "Incomplete";
     completeBtn.addEventListener("click", () => {
-      if (completeBtn.textContent === "Complete") {
-        completeBtn.textContent = "Completed";
-      } else {
+      if (completeBtn.textContent === "Incomplete") {
         completeBtn.textContent = "Complete";
+      } else {
+        completeBtn.textContent = "Incomplete";
       }
     });
 
