@@ -139,6 +139,41 @@ function updateProjects() {
     });
     newProjectDiv.appendChild(deleteBtn);
 
+    const editNameBtn = document.createElement("button");
+    editNameBtn.textContent = "Edit";
+    editNameBtn.addEventListener("click", () => {
+      const projectDialog = document.createElement("dialog");
+      projectDiv.appendChild(projectDialog);
+      const nameLabel = document.createElement("label");
+      nameLabel.textContent = "Project name: ";
+      const nameInput = document.createElement("input");
+      nameInput.value = project.getName();
+      nameLabel.appendChild(nameInput);
+      projectDialog.appendChild(nameLabel);
+
+      const confirmBtn = document.createElement("button");
+      confirmBtn.textContent = "Confirm";
+      confirmBtn.addEventListener("click", () => {
+        project.setName(nameInput.value);
+        h2.textContent = project.getName();
+        projectDialog.close();
+      });
+
+      projectDialog.appendChild(confirmBtn);
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "Cancel";
+      cancelBtn.addEventListener("click", () => {
+        projectDialog.close();
+      });
+
+      projectDialog.appendChild(cancelBtn);
+
+      projectDialog.showModal();
+    });
+
+    newProjectDiv.appendChild(editNameBtn);
+
     newProjectDiv.appendChild(todosDiv);
 
     updateTodos(project, todosDiv);
@@ -191,11 +226,11 @@ function updateTodos(project, todosDiv) {
     const completeBtn = document.createElement("button");
     completeBtn.textContent = "Complete";
     completeBtn.addEventListener("click", () => {
-        if (completeBtn.textContent === "Complete") {
-            completeBtn.textContent = "Completed";
-        } else {
-            completeBtn.textContent = "Complete";
-        }
+      if (completeBtn.textContent === "Complete") {
+        completeBtn.textContent = "Completed";
+      } else {
+        completeBtn.textContent = "Complete";
+      }
     });
 
     const detailsBtn = document.createElement("button");
