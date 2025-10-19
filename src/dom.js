@@ -343,18 +343,18 @@ addProjectBtn.addEventListener("click", () => {
 
 //projectDiv.appendChild(addProjectBtn);
 
-//projectManager.retrieveStorage();
+projectManager.retrieveStorage();
 updateProjects();
+
 
 const saveBtn = document.createElement("button");
 saveBtn.textContent = "Save";
 
 saveBtn.addEventListener("click", () => projectManager.saveProjects());
 
-console.log(JSON.parse(localStorage.getItem("projects")));
-
 const btnHeader = document.createElement("div");
 btnHeader.appendChild(addProjectBtn);
 btnHeader.appendChild(saveBtn);
 dom.appendChild(btnHeader);
+
 dom.appendChild(projectDiv);

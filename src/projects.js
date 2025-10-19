@@ -1,5 +1,5 @@
 export const ProjectManager = () => {
-  let projects = [project("Project 1")];
+  let projects = [];
 
   const addProject = (project) => {
     projects.push(project);
@@ -44,15 +44,34 @@ export const ProjectManager = () => {
         ]);
       }
     }
-
-    //console.log(projectStorage);
-
     localStorage.setItem("projects", JSON.stringify(projectStorage));
   };
 
   const retrieveStorage = () => {
-    console.log(JSON.parse(localStorage.getItem("projectStorage"))[0]);
-    console.log(projects[0]);
+    const savedProjects = JSON.parse(localStorage.getItem("projects"));
+    console.log(savedProjects[0]);
+    for (let i = 0; i < savedProjects.length; i++) {
+      const projectName = savedProjects[i][0];
+      savedProjects[i].shift();
+      const todoData = savedProjects[i];
+      console.log(todoData);
+
+      if (isValidName(projectName)) {
+        const projectObj = project(projectName);
+        if (todoData.length > 0) {
+          const newTodo = todo(...todoData);
+          projectObj.addTodo(newTodo);
+        }
+        addProject(projectObj);
+      } else {
+        for (const existingProject of projects) {
+          if (existingProject.getName() === projectName) {
+            const newTodo = todo(...todoData);
+            existingProject.addTodo(newTodo);
+          }
+        }
+      }
+    }
   };
 
   return {
