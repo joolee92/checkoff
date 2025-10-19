@@ -350,9 +350,10 @@ saveBtn.textContent = "Save";
 
 saveBtn.addEventListener("click", () => projectManager.saveProjects());
 
-const btnHeader = document.createElement("div");
-btnHeader.appendChild(addProjectBtn);
-btnHeader.appendChild(saveBtn);
-dom.appendChild(btnHeader);
+const header = document.createElement("header");
+header.appendChild(addProjectBtn);
+header.appendChild(saveBtn);
+dom.appendChild(header);
 
 dom.appendChild(projectDiv);
+

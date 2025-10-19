@@ -49,12 +49,14 @@ export const ProjectManager = () => {
 
   const retrieveStorage = () => {
     const savedProjects = JSON.parse(localStorage.getItem("projects"));
-    console.log(savedProjects[0]);
+    if (savedProjects === null) {
+      addProject(project("Project 1"));
+      return;
+    }
     for (let i = 0; i < savedProjects.length; i++) {
       const projectName = savedProjects[i][0];
       savedProjects[i].shift();
       const todoData = savedProjects[i];
-      console.log(todoData);
 
       if (isValidName(projectName)) {
         const projectObj = project(projectName);
