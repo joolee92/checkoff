@@ -341,7 +341,7 @@ addProjectBtn.addEventListener("click", () => {
 });
 
 
-//projectManager.retrieveStorage();
+projectManager.retrieveStorage();
 updateProjects();
 
 
