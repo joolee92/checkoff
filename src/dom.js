@@ -210,7 +210,6 @@ function updateProjects() {
 }
 
 function updateTodos(project, todosDiv) {
-  //projectManager.updateStorage();
   for (const todo of project.todos()) {
     const todoMenu = todoDialog("edit", project);
     const dialog = todoMenu.div();
@@ -231,7 +230,9 @@ function updateTodos(project, todosDiv) {
     const btnDiv = document.createElement("div");
 
     const completeBtn = document.createElement("button");
-    todo.isComplete() ? completeBtn.textContent = "Complete" : completeBtn.textContent = "Incomplete";
+    todo.isComplete()
+      ? (completeBtn.textContent = "Complete")
+      : (completeBtn.textContent = "Incomplete");
     completeBtn.addEventListener("click", () => {
       if (completeBtn.textContent === "Incomplete") {
         todo.toggleComplete();
@@ -340,34 +341,20 @@ addProjectBtn.addEventListener("click", () => {
   projectDialog.showModal();
 });
 
-projectDiv.appendChild(addProjectBtn);
+//projectDiv.appendChild(addProjectBtn);
 
 //projectManager.retrieveStorage();
 updateProjects();
 
-dom.appendChild(projectDiv);
-
 const saveBtn = document.createElement("button");
 saveBtn.textContent = "Save";
-dom.appendChild(saveBtn);
 
-saveBtn.addEventListener("click", () => {
-  const projectStorage = [];
-  for (let i = 0; i < projectManager.projectCount(); i++) {
-    if (projectManager.getProjects()[i].todoCount() === 0) {
-        projectStorage.push([projectManager.getProjects()[i].getName()]);
-    }
-    for (const todo of projectManager.getProjects()[i].todos()) {
-      projectStorage.push([
-        projectManager.getProjects()[i].getName(),
-        todo.getTitle(),
-        todo.getDescription(),
-        todo.getDate(),
-        todo.getPriority(),
-        todo.isComplete(),
-      ]);
-    }
-  }
+saveBtn.addEventListener("click", () => projectManager.saveProjects());
 
-  console.log(projectStorage);
-});
+console.log(JSON.parse(localStorage.getItem("projects")));
+
+const btnHeader = document.createElement("div");
+btnHeader.appendChild(addProjectBtn);
+btnHeader.appendChild(saveBtn);
+dom.appendChild(btnHeader);
+dom.appendChild(projectDiv);

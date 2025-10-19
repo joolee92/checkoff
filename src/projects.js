@@ -11,7 +11,6 @@ export const ProjectManager = () => {
         projects.splice(i, 1);
       }
     }
-    updateStorage();
   };
 
   const getProjects = () => projects;
@@ -25,12 +24,30 @@ export const ProjectManager = () => {
         return false;
       }
     }
-    updateStorage();
     return true;
   };
 
-  const updateStorage = () => {
-    localStorage.setItem("projectStorage", JSON.stringify(projects));
+  const saveProjects = () => {
+    const projectStorage = [];
+    for (let i = 0; i < projectCount(); i++) {
+      if (projects[i].todoCount() === 0) {
+        projectStorage.push([projects[i].getName()]);
+      }
+      for (const todo of projects[i].todos()) {
+        projectStorage.push([
+          projects[i].getName(),
+          todo.getTitle(),
+          todo.getDescription(),
+          todo.getDate(),
+          todo.getPriority(),
+          todo.isComplete(),
+        ]);
+      }
+    }
+
+    //console.log(projectStorage);
+
+    localStorage.setItem("projects", JSON.stringify(projectStorage));
   };
 
   const retrieveStorage = () => {
@@ -38,7 +55,15 @@ export const ProjectManager = () => {
     console.log(projects[0]);
   };
 
-  return { addProject, deleteProject, projectCount, getProjects, isValidName, updateStorage, retrieveStorage };
+  return {
+    addProject,
+    deleteProject,
+    projectCount,
+    getProjects,
+    isValidName,
+    saveProjects,
+    retrieveStorage,
+  };
 };
 
 export const project = (name) => {
@@ -96,13 +121,19 @@ export const project = (name) => {
   };
 };
 
-export const todo = (title, description = "", dueDate, priority, completed=false) => {
+export const todo = (
+  title,
+  description = "",
+  dueDate,
+  priority,
+  completed = false
+) => {
   const id = crypto.randomUUID();
   const setTitle = (newTitle) => (title = newTitle);
   const setDescription = (newDescription) => (description = newDescription);
   const setDate = (newDate) => (dueDate = newDate);
   const setPriority = (newPriority) => (priority = newPriority);
-  const toggleComplete = () => completed = !completed;
+  const toggleComplete = () => (completed = !completed);
 
   const getTitle = () => title;
   const getDescription = () => description;
