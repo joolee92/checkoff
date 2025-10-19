@@ -109,7 +109,7 @@ function addProject(name) {
 function updateProjects() {
   projectDiv.innerHTML = "";
   projectDiv.appendChild(addProjectBtn);
-  for (const project of projectManager.projects) {
+  for (const project of projectManager.getProjects()) {
     const todosDiv = document.createElement("div");
     const newProjectDiv = document.createElement("div");
     const h2 = document.createElement("h2");
@@ -154,9 +154,14 @@ function updateProjects() {
       const confirmBtn = document.createElement("button");
       confirmBtn.textContent = "Confirm";
       confirmBtn.addEventListener("click", () => {
-        project.setName(nameInput.value);
-        h2.textContent = project.getName();
-        projectDialog.close();
+        if (nameInput.value === project.getName()) projectDialog.close();
+        else {
+          if (projectManager.isValidName(nameInput.value)) {
+            project.setName(nameInput.value);
+            h2.textContent = project.getName();
+            projectDialog.close();
+          } else alert(`${nameInput.value} already exists!`);
+        }
       });
 
       projectDialog.appendChild(confirmBtn);
@@ -298,14 +303,24 @@ addProjectBtn.addEventListener("click", () => {
   const nameLabel = document.createElement("label");
   nameLabel.textContent = "Project name: ";
   const nameInput = document.createElement("input");
+
+  let i = 1;
+  let defaultName = `Project ${projectManager.projectCount() + i}`;
+  if (!projectManager.isValidName(`${defaultName}`)) {
+    i++;
+    defaultName = `Project ${projectManager.projectCount() + i}`;
+  }
+  nameInput.value = `${defaultName}`;
   nameLabel.appendChild(nameInput);
   projectDialog.appendChild(nameLabel);
 
   const confirmBtn = document.createElement("button");
   confirmBtn.textContent = "Confirm";
   confirmBtn.addEventListener("click", () => {
-    addProject(nameInput.value);
-    projectDialog.close();
+    if (projectManager.isValidName(nameInput.value)) {
+      addProject(nameInput.value);
+      projectDialog.close();
+    } else alert(`${nameInput.value} already exists!`);
   });
 
   projectDialog.appendChild(confirmBtn);

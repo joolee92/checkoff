@@ -13,12 +13,24 @@ export const ProjectManager = () => {
     }
   };
 
-  return { addProject, deleteProject, projects };
+  const getProjects = () => projects;
+
+  const projectCount = () => projects.length;
+
+  const isValidName = (projectName) => {
+    for (const project of projects) {
+      if (projectName === project.getName()) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  return { addProject, deleteProject, projectCount, getProjects, isValidName };
 };
 
 export const project = (name) => {
   const todoList = [];
-  const id = crypto.randomUUID();
 
   const setName = (newName) => (name = newName);
 
